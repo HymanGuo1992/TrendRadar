@@ -392,6 +392,7 @@ class NotificationDispatcher:
                 ai_analysis=ai_analysis if display_regions.get("AI_ANALYSIS", True) else None,
                 display_regions=display_regions,
                 standalone_data=standalone_data if display_regions.get("STANDALONE", False) else None,
+                mention_userids=self.config.get("FEISHU_MENTION_USERIDS", ""),
             ),
         )
 
@@ -473,6 +474,7 @@ class NotificationDispatcher:
                 ai_analysis=ai_analysis if display_regions.get("AI_ANALYSIS", True) else None,
                 display_regions=display_regions,
                 standalone_data=standalone_data if display_regions.get("STANDALONE", False) else None,
+                mention_userids=self.config.get("WEWORK_MENTION_USERIDS", ""),
             ),
         )
 

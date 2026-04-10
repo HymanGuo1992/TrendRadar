@@ -92,6 +92,7 @@ def send_to_feishu(
     ai_analysis: Any = None,
     display_regions: Optional[Dict] = None,
     standalone_data: Optional[Dict] = None,
+    mention_userids: str = "",
 ) -> bool:
     """
     发送到飞书（支持分批发送，支持热榜+RSS合并+独立展示区）
@@ -161,6 +162,17 @@ def send_to_feishu(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        is_last_batch = (i == len(batches))
+
+        # 最后一批追加艾特内容（仅当配置了 mention_userids 时）
+        # 飞书艾特格式：<at user_id="userid">姓名</at>，或简化版 <at user_id="userid"></at>
+        if is_last_batch and mention_userids:
+            mention_str = "".join(
+                f'<at user_id="all">小助手</at>' for uid in mention_userids.split(",") if uid.strip()
+            )
+            batch_content = batch_content + f"\n\n{mention_str}请进一步分析上述内容，并推荐 Top3 值得关注的股票机会。"
+            print(f"最后一批次消息：{batch_content}")
+
         content_size = len(batch_content.encode("utf-8"))
         print(
             f"发送{log_prefix}第 {i}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"
@@ -352,6 +364,7 @@ def send_to_wework(
     ai_analysis: Any = None,
     display_regions: Optional[Dict] = None,
     standalone_data: Optional[Dict] = None,
+    mention_userids: str = "",
 ) -> bool:
     """
     发送到企业微信（支持分批发送，支持 markdown 和 text 两种格式，支持热榜+RSS合并+独立展示区）
@@ -426,8 +439,20 @@ def send_to_wework(
 
     print(f"{log_prefix}消息分为 {len(batches)} 批次发送 [{report_type}]")
 
+    # 企业微信艾特配置（在最后一批消息末尾追加）
+    # 格式：userid1,userid2 或留空不艾特
+    # 企业微信 userid 可在企业微信管理后台 → 通讯录 → 成员详情中查看
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        is_last_batch = (i == len(batches))
+
+        # 最后一批追加艾特内容（仅当配置了 mention_userids 时）
+        if is_last_batch and mention_userids:
+            mention_str = "".join(
+                f"<@{uid.strip()}>" for uid in mention_userids.split(",") if uid.strip()
+            )
+            batch_content = batch_content + f"\n\n{mention_str} 请进一步分析上述内容，并推荐 Top3 值得关注的股票机会。"
+
         # 根据消息类型构建 payload
         if is_text_mode:
             # text 格式：去除 markdown 语法

@@ -416,11 +416,14 @@ def _load_webhook_config(config_data: Dict) -> Dict:
     return {
         # 飞书
         "FEISHU_WEBHOOK_URL": _get_env_str("FEISHU_WEBHOOK_URL") or feishu.get("webhook_url", ""),
+        "FEISHU_MENTION_USERIDS": _get_env_str("FEISHU_MENTION_USERIDS") or feishu.get("mention_userids", ""),
         # 钉钉
         "DINGTALK_WEBHOOK_URL": _get_env_str("DINGTALK_WEBHOOK_URL") or dingtalk.get("webhook_url", ""),
         # 企业微信
         "WEWORK_WEBHOOK_URL": _get_env_str("WEWORK_WEBHOOK_URL") or wework.get("webhook_url", ""),
         "WEWORK_MSG_TYPE": _get_env_str("WEWORK_MSG_TYPE") or wework.get("msg_type", "markdown"),
+        "WEWORK_MENTION_USERIDS": _get_env_str("WEWORK_MENTION_USERIDS") or wework.get("mention_userids", ""),
+        # 飞书
         # Telegram
         "TELEGRAM_BOT_TOKEN": _get_env_str("TELEGRAM_BOT_TOKEN") or telegram.get("bot_token", ""),
         "TELEGRAM_CHAT_ID": _get_env_str("TELEGRAM_CHAT_ID") or telegram.get("chat_id", ""),
